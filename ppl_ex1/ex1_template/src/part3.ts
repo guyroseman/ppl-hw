@@ -8,7 +8,13 @@ const findOrThrow = <T>(pred: (x: T) => boolean, a: T[]): T => {
     throw "No element found.";
 }
 
-export const findResult = <T>(pred: (x: T) => boolean, a: T[]): Result<T> => undefined as any;
+export const findResult = <T>(pred: (x: T) => boolean, a: T[]): Result<T> => {
+     // Find the first match without using loops
+    const item = a.find(pred);
+
+    // Return Ok if found, or Failure if nothing matched
+    return item !== undefined ? makeOk(item) : makeFailure("No element found.");
+}
 
 /* Client code */
 const returnSquaredIfFoundEven_v1 = (a: number[]): number => {
@@ -20,6 +26,15 @@ const returnSquaredIfFoundEven_v1 = (a: number[]): number => {
     }
 }
 
-export const returnSquaredIfFoundEven_v2 = (a: number[]): Result<number> => undefined as any;
-export const returnSquaredIfFoundEven_v3 = (a: number[]): number => undefined as any;
+export const returnSquaredIfFoundEven_v2 = (a: number[]): Result<number> => {
+    // Chain the operations find the first even number, then square it.
+    // 'bind' automatically handles the Failure case if no even number is found.
+    return bind(findResult(x => x % 2 === 0, a), (x: number) => makeOk(x * x));
+}
+
+export const returnSquaredIfFoundEven_v3 = (a: number[]): number => {
+    // Extract the value: square the number if the search was successful.
+    // 'either' automatically handles the Failure case by returning our default of -1.
+    return either(findResult(x => x % 2 === 0, a), (x: number) => (x*x), (x: String) => -1);
+};
 
