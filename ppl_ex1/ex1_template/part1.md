@@ -114,4 +114,3 @@ Guidelines:
 
 6. [3 points] `(f,g) => x => f(g(x+1))`
 **Answer:** <T, U>(f: (y: T) => U, g: (x: number) => T) => (x: number) => U
-
